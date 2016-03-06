@@ -54,43 +54,21 @@
 
 int lauflicht = 0x01;
 unsigned long counter = 0;
-unsigned long cmax = 0;
 int i = 0;
 int btn2;
 int btn3;
 unsigned long timems = 0;
-unsigned int interruptcounter = 5;
+unsigned long ms = 0;
+int pause = 0;
+
 
 
 void portinit();
-//void interrupt ISR();
 void settimer();
-void delay();
 void delay_ms (unsigned long ms);
 
 
 
-
-/*#pragma code low_isr=0x18
-#pragma interruptlow low_isr
-void low_isr (void)
-{
-    int tmr0ie, tmr0if;
-    tmr0ie = (INTCON >> 5) & 1;
-    tmr0if = (INTCON >> 2) & 1;
-
-   if(tmr0ie && tmr0if)
-   {
-      //TMR0 Overflow ISR
-      interruptcounter++;  //Increment Over Flow Counter
-
-
-      //Clear Flag
-      tmr0if=0;
-   }
-} */ /* low_isr */
-
-//#pragma interrupt high_isr save=section(".tmpdata"),PROD,section("MATH_DATA")
 #pragma interrupt high_isr
 void high_isr(void)
 {
@@ -99,88 +77,17 @@ void high_isr(void)
   tmr2if = (PIR1 >> 1) & 1;
 
   if (tmr2ie && tmr2if) {
-    //TMR0 Overflow ISR
-    interruptcounter++;  //Increment Over Flow Counter
-    //Clear Flag
-    PIR1 &= ~(1 << 1);
+    timems++;
+    PIR1 &= ~(1 << 1);  //Clear Flag
   }
 }
-#pragma code HIGH_INTERRUPT_VECTOR = 0x08
- 
-void high_interrupt(void)
+
+ #pragma code HIGH_INTERRUPT_VECTOR = 0x08
+ void high_interrupt(void)
 {
  	_asm GOTO high_isr _endasm
 }
 #pragma code /* return to the default code section */
-
- 
- //---------------------------------------------------------------------
- // Low priority interrupt routines
- //---------------------------------------------------------------------
-/*#pragma interrupt low_isr
-void low_isr(void)
- {
-         int tmr0ie, tmr0if;
-    tmr0ie = (INTCON >> 5) & 1;
-    tmr0if = (INTCON >> 2) & 1;
-
-   if(tmr0ie && tmr0if)
-   {
-      //TMR0 Overflow ISR
-      interruptcounter++;  //Increment Over Flow Counter
-
-
-      //Clear Flag
-      //INTCON &= ~(1 << 2);
-   }
-
- }*/
-
-
-
- 
- //---------------------------------------------------------------------
- // Low priority interrupt vector
- //---------------------------------------------------------------------
-//#pragma code low_vector=0x18
-/*#pragma code LOW_INTERRUPT_VECTOR = 0x18
-void low_interrupt (void)
-{
- 	_asm GOTO low_isr _endasm
-}
-#pragma code*/
-
-
-
-
-void delay() 
-{    
-    btn2 = (PORTB >> 4) & 1; /* 0=gedrueckt */
-    btn3 = (PORTB >> 5) & 1; /* 0=gedrueckt */
-    
-    
-    if (btn3 == 0) { /* ganz schnell */
-      cmax = 10000;  
-    }
-    else if (btn2 == 0) { /* mittel*/
-      cmax = 100000;
-    }
-    else { /* langsam */
-      cmax = 500000;
-    }
-    for (counter = 0; counter < cmax; counter++) {
-        ;
-    }
-}
-
-    
-void delay_ms (unsigned long ms)
-{
-    for (counter = 0; counter < ms; counter++) {
-        ;
-    }
-}
-
 
 void portinit() 
 {
@@ -190,123 +97,60 @@ void portinit()
 
 void settimer()
 {
-    T2CON =0xFF; 
+    T2CON =0x4D; 
     INTCON  |= (1 << 7); // GIEH=1
     INTCON  |= (1 << 6); // GIEL=1
     IPR2 |= (1 << 1); // TMR2IP=1
     PIE1 |= (1 << 1); // TMR2IE=1
-    
-    /*RCON |= (1 << 7); // IPEN=1
-   //T0CON = 0xCF;
-   T0CON = 0xC7;
-   //INTCON = 0xE0;
-   //TRISA = 0xFF;
-   
-   INTCON = 0x00;
-   
-   INTCON2 |= (1 << 2); // TMR0IP=1
-   //INTCON2 &= ~(1 << 2); // TMR0IP=0
-   INTCON  |= (1 << 5); // TMR0IE=1*/
-   
-   
-   
-   //T0PS0=1; //Prescaler is divide by 256
-   //T0PS1=1;
-   //T0PS2=1;
-   //PSA=0;      //Timer Clock Source is from Prescaler
-   //T0CS=0;     //Prescaler gets clock from FCPU (5MHz)
-   //T08BIT=1;   //8 BIT MODE
-   //TMR0IE=1;   //Enable TIMER0 Interrupt
-   //PEIE=1;     //Enable Peripheral Interrupt
-   //GIE=1;      //Enable INTs globally
-   //TMR0ON=1;      //Now start the timer!
-   //Set RB1 as output because we have LED on it
-   //while(1);   //Sit Idle Timer will do every thing!
+    //PR2 = 0xF9;
 }
 
-//Main Interrupt Service Routine (ISR)
-/*void interrupt ISR()
+void delay_ms (unsigned long ms)
 {
-    TMR0IE = (INTCON >> 5) & 1;
-    TMR0IF = (INTCON >> 2) & 1;
-
-   if(TMR0IE && TMR0IF)
-   {
-      //TMR0 Overflow ISR
-      interruptcounter++;  //Increment Over Flow Counter
-
-      if(interruptcounter==76)
-      {
-         //Toggle RB1 (LED)
-
-         if(PORTD==0)
-            PORTD=1;
-         else
-            PORTD=0;
-
-         interruptcounter=0;  //Reset Counter
-
-      }
-
-      //Clear Flag
-      TMR0IF=0;
-   }
-}*/
-
+    int tmp;
+    tmp = timems;
+    while(timems - tmp < ms) {
+        _asm NOP _endasm
+    }
+        
+}
 
 void main (void) 
 {
     portinit();
     settimer();
     while (1) {
-      unsigned char tmp;// = TMR2;
-      tmp = interruptcounter >> 3;
-      LATD = tmp;
-      /*delay ();
-       LATD = lauflicht;
-        for(i = 0; i<7; i++)
-        {
-            LATD = lauflicht;
-            delay();
-            lauflicht = lauflicht<<1;
-            LATD = lauflicht;
-            delay();
+        /*int tmp;
+        int i;
+        tmp = 0;
+        i = 0;
+        btn2 = (PORTB >> 4) & 1;
+        btn3 = (PORTB >> 5) & 1;
+        if(btn2 == 0) {
+            pause = 300;
+        } else if (btn3 == 0) {
+            pause = 200;
+        } else {
+            pause = 400;
         }
-        for(;i>0; i--)
-        {
-            LATD = lauflicht;
-            delay();
-            lauflicht >>= 1;
-            LATD = lauflicht;
-            delay();
-        }    */
+        LATD = lauflicht;
+        if (timems - tmp > pause) {
+             lauflicht = lauflicht >> 1;
+             i++;
+             tmp = timems;
+             LATD = lauflicht;
+            }
+        if (i > 6) {
+            lauflicht = 0x01;
+        }
+        if (timems - tmp > pause && i>0) {
+             lauflicht = lauflicht >> 1;
+             i--;
+             tmp = timems;
+            }*/
+        LATD = 0xFF ;
+        delay_ms(2000);
+        LATD = 0x00;
+            
     }
 }
-
-
-
-
-/*#pragma code high_isr=0x08
-#pragma interrupt high_isr
-void high_isr (void)
-{
-    int tmr0ie, tmr0if;
-    tmr0ie = (INTCON >> 5) & 1;
-    tmr0if = (INTCON >> 2) & 1;
-
-   if(tmr0ie && tmr0if)
-   {
-      //TMR0 Overflow ISR
-      interruptcounter++;  //Increment Over Flow Counter
-
-
-      //Clear Flag
-      tmr0if=0;
-   }
-}*/ /* high_isr */
-
-
-
-
-
-//test2
