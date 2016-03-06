@@ -60,6 +60,8 @@ int btn3;
 unsigned long timems = 0;
 unsigned long ms = 0;
 int pause = 0;
+long tmp = 0;
+
 
 
 
@@ -107,7 +109,7 @@ void settimer()
 
 void delay_ms (unsigned long ms)
 {
-    int tmp;
+    long tmp;
     tmp = timems;
     while(timems - tmp < ms) {
         _asm NOP _endasm
@@ -120,37 +122,32 @@ void main (void)
     portinit();
     settimer();
     while (1) {
-        /*int tmp;
-        int i;
-        tmp = 0;
-        i = 0;
         btn2 = (PORTB >> 4) & 1;
         btn3 = (PORTB >> 5) & 1;
-        if(btn2 == 0) {
-            pause = 300;
+        if ((btn2 == 0) && (btn3 == 0)) {
+            pause = 31;
         } else if (btn3 == 0) {
             pause = 200;
+        } else if (btn2 == 0) {
+            pause = 500;
         } else {
-            pause = 400;
+            pause = 1000;
         }
-        LATD = lauflicht;
-        if (timems - tmp > pause) {
-             lauflicht = lauflicht >> 1;
+        LATD =lauflicht;
+        if ((timems - tmp) > pause) {
+             lauflicht = lauflicht << 1;
              i++;
              tmp = timems;
-             LATD = lauflicht;
             }
-        if (i > 6) {
+         if (i > 7) {
             lauflicht = 0x01;
+            i = 0;
         }
-        if (timems - tmp > pause && i>0) {
+        /*if (timems - tmp > pause && i>0) {
              lauflicht = lauflicht >> 1;
              i--;
              tmp = timems;
             }*/
-        LATD = 0xFF ;
-        delay_ms(2000);
-        LATD = 0x00;
-            
+       
     }
 }
