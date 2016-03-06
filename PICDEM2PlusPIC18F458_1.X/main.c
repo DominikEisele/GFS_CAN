@@ -94,17 +94,25 @@ void low_isr (void)
 #pragma interrupt high_isr
 void high_isr(void)
 {
-  int tmr0ie, tmr0if;
-  tmr0ie = (INTCON >> 5) & 1;
-  tmr0if = (INTCON >> 2) & 1;
+  int tmr2ie, tmr2if;
+  tmr2ie = (PIE1 >> 1) & 1;
+  tmr2if = (PIR1 >> 1) & 1;
 
-  if (tmr0ie && tmr0if) {
+  if (tmr2ie && tmr2if) {
     //TMR0 Overflow ISR
     interruptcounter++;  //Increment Over Flow Counter
     //Clear Flag
-    INTCON &= ~(1 << 2);
+    PIR1 &= ~(1 << 1);
   }
 }
+#pragma code HIGH_INTERRUPT_VECTOR = 0x08
+ 
+void high_interrupt(void)
+{
+ 	_asm GOTO high_isr _endasm
+}
+#pragma code /* return to the default code section */
+
  
  //---------------------------------------------------------------------
  // Low priority interrupt routines
@@ -129,18 +137,7 @@ void low_isr(void)
  }*/
 
 
-//---------------------------------------------------------------------
-// High priority interrupt vector
-//---------------------------------------------------------------------
-//#pragma code high_vector=0x08
-#pragma code HIGH_INTERRUPT_VECTOR = 0x08
- 
-void high_interrupt(void)
-{
- 	_asm GOTO high_isr _endasm
-}
-#pragma code /* return to the default code section */
- 
+
  
  //---------------------------------------------------------------------
  // Low priority interrupt vector
@@ -162,14 +159,14 @@ void delay()
     btn3 = (PORTB >> 5) & 1; /* 0=gedrueckt */
     
     
-    if (btn3 == 0) { /* langsam */
-      cmax = 500000;  
+    if (btn3 == 0) { /* ganz schnell */
+      cmax = 10000;  
     }
     else if (btn2 == 0) { /* mittel*/
       cmax = 100000;
     }
-    else { /* ganz schnell */
-      cmax = 10000;
+    else { /* langsam */
+      cmax = 500000;
     }
     for (counter = 0; counter < cmax; counter++) {
         ;
@@ -193,7 +190,13 @@ void portinit()
 
 void settimer()
 {
-    RCON |= (1 << 7); // IPEN=1
+    T2CON =0xFF; 
+    INTCON  |= (1 << 7); // GIEH=1
+    INTCON  |= (1 << 6); // GIEL=1
+    IPR2 |= (1 << 1); // TMR2IP=1
+    PIE1 |= (1 << 1); // TMR2IE=1
+    
+    /*RCON |= (1 << 7); // IPEN=1
    //T0CON = 0xCF;
    T0CON = 0xC7;
    //INTCON = 0xE0;
@@ -203,9 +206,8 @@ void settimer()
    
    INTCON2 |= (1 << 2); // TMR0IP=1
    //INTCON2 &= ~(1 << 2); // TMR0IP=0
-   INTCON  |= (1 << 5); // TMR0IE=1
-   INTCON  |= (1 << 7); // GIEH=1
-   INTCON  |= (1 << 6); // GIEL=1
+   INTCON  |= (1 << 5); // TMR0IE=1*/
+   
    
    
    //T0PS0=1; //Prescaler is divide by 256
@@ -257,12 +259,12 @@ void main (void)
     portinit();
     settimer();
     while (1) {
-      unsigned char tmp;// = TMR0L;
+      unsigned char tmp;// = TMR2;
       tmp = interruptcounter >> 3;
       LATD = tmp;
-      //delay ();
-      // LATD = interruptcounter;
-        /*for(i = 0; i<7; i++)
+      /*delay ();
+       LATD = lauflicht;
+        for(i = 0; i<7; i++)
         {
             LATD = lauflicht;
             delay();
@@ -277,7 +279,7 @@ void main (void)
             lauflicht >>= 1;
             LATD = lauflicht;
             delay();
-        } */   
+        }    */
     }
 }
 
