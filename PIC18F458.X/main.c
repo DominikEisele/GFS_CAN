@@ -49,8 +49,7 @@ void delay_ms (unsigned long ms);
 
 
 #pragma interrupt high_isr
-void high_isr(void)
-{
+void high_isr(void) {
   int tmr2ie, tmr2if;
   tmr2ie = (PIE1 >> 1) & 1;
   tmr2if = (PIR1 >> 1) & 1;
@@ -62,8 +61,7 @@ void high_isr(void)
 }
  
 #pragma code HIGH_INTERRUPT_VECTOR = 0x08
- void high_interrupt(void)
-{
+ void high_interrupt(void) {
  	_asm GOTO high_isr _endasm
 }
 #pragma code /* return to the default code section */
@@ -72,8 +70,8 @@ void high_isr(void)
 void portinit() {
     TRISA = 0xFF;
     TRISB = 0xFF;
+    TRISC &= ~(1 << 2);
     TRISD = 0x00;
-    //TRISE = 0xFF;
 }
 
 void settimer() {
@@ -89,21 +87,10 @@ void setad(){
     ADCON1 = 0;
     
     ADCON0 |= (1 << 0);  // ADON  = 1
-    
     ADCON0 |= (1 << 7);  // ADCS1 = 1
-    //ADCON0 &= ~(1 << 6); // ADCS0 = 0
     ADCON0 |= (1 << 5);  // CHS2  = 1  
-    //ADCON0 &= ~(1 << 4); // CHS1  = 0
-    //ADCON0 |= (1 << 3);  // CHS0  = 1
     ADCON0 |= (1 << 2);  // DONE  = 1 
-    
-    
-    //ADCON1 &= ~(1 << 7); // ADFM  = 0
     ADCON1 |= (1 << 6);  // ADCS2 = 1
-    //ADCON1 &= ~(1 << 3); // PCFG3 = 0
-    //ADCON1 &= ~(1 << 2); // PCFG2 = 0
-    //ADCON1 &= ~(1 << 1); // PCFG1 = 0
-    //ADCON1 &= ~(1 << 0); // PCFG0 = 0
 }
 
 void delay_ms (unsigned long ms) {
@@ -119,26 +106,46 @@ void main (void) {
     settimer();
     setad();
     while (1) {
-        delay_ms(20);
-        if (ADRESH <= 11) {
-            leuchtbalken = 0x80;
-        } else if (ADRESH <= 22) {
-            leuchtbalken = 0xC0;
-        } else if (ADRESH <= 33) {
-            leuchtbalken = 0xE0;
-        } else if (ADRESH <= 44) {
-            leuchtbalken = 0xF0;
-        } else if (ADRESH <= 55) {
-            leuchtbalken = 0xF8;
-        } else if (ADRESH <= 66) {
-            leuchtbalken = 0xFC;
-        } else if (ADRESH <= 77) {
-            leuchtbalken = 0xFE;
-        } else if (ADRESH <= 88) {
+        int RC2 = 0;
+        ADCON0 |= (1 << 2);
+        if (ADRESH == 0) {
+            leuchtbalken = 0x00;
+            RC2 = 0;
+        } else if (ADRESH <= 11) {
+            leuchtbalken = 0x01;
+            RC2 = 0;
+        } else if (ADRESH <= 21) {
+            leuchtbalken = 0x03;
+            RC2 = 0;
+        } else if (ADRESH <= 31) {
+            leuchtbalken = 0x07;
+            RC2 = 0;
+        } else if (ADRESH <= 41) {
+            leuchtbalken = 0x0F;
+            RC2 = 0;
+        } else if (ADRESH <= 51) {
+            leuchtbalken = 0x1F;
+            RC2 = 0;
+        } else if (ADRESH <= 61) {
+            leuchtbalken = 0x3F;
+            RC2 = 0;
+        } else if (ADRESH <= 71) {
+            leuchtbalken = 0x7F;
+            RC2 = 0;
+        } else if (ADRESH <= 81) {
             leuchtbalken = 0xFF;
+            RC2 = 0;
+        } else {
+            leuchtbalken = 0xFF;
+            RC2 = 1;
         }
         LATD = leuchtbalken;
-        delay_ms(20);
+        if (RC2 == 1) {
+            LATC |= (1 << 2);
+        }
+        else {
+            LATC &= ~(1 << 2);
+        }
     } 
   
         
@@ -152,6 +159,7 @@ void main (void) {
 //         delay_ms(10);
 //         LATD = ADRESH;
 //         delay_ms(10);
+//    }
 //        btn2 = (PORTB >> 4) & 1;
 //        btn3 = (PORTB >> 5) & 1;
 //        if ((btn2 == 0) && (btn3 == 0)) {
