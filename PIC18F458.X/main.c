@@ -101,37 +101,46 @@ void setad(){
 }
 
 void setcan() {
-    CANCON |= (1 << 7);  // Set Config-Mode
+      
+    CANCON = (1 << 7);  // Set Config-Mode
+    
+    delay_ms (10);
+    
+    BRGCON1 = 0;
+    BRGCON2 = 0;
+    BRGCON3 = 0;
+    CIOCON = 0;
 
+    /*
     CANCON &= ~(1 << 1);
     CANCON &= ~(1 << 2);
     CANCON |= (1 << 3);
     CANCON &= ~(1 << 4);
     CANCON &= ~(1 << 5);
     CANCON &= ~(1 << 6);
+     */
     
-    BRGCON1 |= (1 << 0);
-    BRGCON1 &= ~(1 << 1);
-    BRGCON1 &= ~(1 << 2);
-    BRGCON1 |= (1 << 3);
-    BRGCON1 &= ~(1 << 4);
-    BRGCON1 &= ~(1 << 5);
-    BRGCON1 &= ~(1 << 6);
-    BRGCON1 &= ~(1 << 7);
+    BRGCON1 |= (3 << 0); // BRP = 8 
+    BRGCON1 |= (0 << 6); // SJW = 1
+    //BRGCON1 &= ~(1 << 1);
+    //BRGCON1 &= ~(1 << 2);
+    //BRGCON1 |= (1 << 3);
+    //BRGCON1 &= ~(1 << 4);
+    //BRGCON1 &= ~(1 << 5);
+    //BRGCON1 &= ~(1 << 6);
+    //BRGCON1 &= ~(1 << 7);
     
-    BRGCON2 |= (1 << 0);    
-    BRGCON2 |= (1 << 1);
-    BRGCON2 &= ~(1 << 2);
-    BRGCON2 |= (1 << 3);
-    BRGCON2 &= ~(1 << 4);
-    BRGCON2 |= (1 << 5);
-    BRGCON2 &= ~(1 << 6);
-    BRGCON2 |= (1 << 7);
     
-    BRGCON3 &= ~(1 << 0);
-    BRGCON3 |= (1 << 1);
-    BRGCON3 &= ~(1 << 2);
-    BRGCON3 &= ~(1 << 6);
+    BRGCON2 |= (2 << 0); // PRSEG2:PRSEG0 = 3
+    BRGCON2 |= (2 << 3); // SEG1PH2:SEG1PH0 = 3
+    //BRGCON2 &= ~(1 << 6); SAM =0 
+    BRGCON2 |= (1 << 7); // SEG2PHTS
+    
+    BRGCON3 |= (2 << 0); // SEG2PH2:SEG2PH0 = 3
+    //BRGCON3 |= (1 << 1);
+    //BRGCON3 &= ~(1 << 2);
+    //BRGCON3 &= ~(1 << 6);
+    CIOCON |= (1 << 5);
     
     CANCON &= ~(1 << 7); // Set Normal Mode
 }
@@ -172,7 +181,11 @@ void main (void) {
             } else {
                 leuchtbalken = 0xFF;
             }
+            
+            //leuchtbalken= CANSTAT;
+            leuchtbalken= COMSTAT;
             LATD = leuchtbalken;
+            
             if (ADRESH > 81) {
                 LATC |= (1 << 2);
             }
