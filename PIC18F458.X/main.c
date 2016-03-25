@@ -45,6 +45,7 @@ int leuchtbalken = 0;
 void portinit();
 void settimer();
 void setad();
+void setcan();
 void delay_ms (unsigned long ms);
 
 
@@ -69,8 +70,14 @@ void high_isr(void) {
  
 void portinit() {
     TRISA = 0xFF;
-    TRISB = 0xFF;
+    
+    TRISB &= ~(1 << 2);
+    TRISB |= (1 << 3);
+    TRISB |= (1 << 4);
+    TRISB |= (1 << 5);
+    
     TRISC &= ~(1 << 2);
+    
     TRISD = 0x00;
 }
 
@@ -93,6 +100,42 @@ void setad(){
     ADCON1 |= (1 << 6);  // ADCS2 = 1
 }
 
+void setcan() {
+    CANCON |= (1 << 7);  // Set Config-Mode
+
+    CANCON &= ~(1 << 1);
+    CANCON &= ~(1 << 2);
+    CANCON |= (1 << 3);
+    CANCON &= ~(1 << 4);
+    CANCON &= ~(1 << 5);
+    CANCON &= ~(1 << 6);
+    
+    BRGCON1 |= (1 << 0);
+    BRGCON1 &= ~(1 << 1);
+    BRGCON1 &= ~(1 << 2);
+    BRGCON1 |= (1 << 3);
+    BRGCON1 &= ~(1 << 4);
+    BRGCON1 &= ~(1 << 5);
+    BRGCON1 &= ~(1 << 6);
+    BRGCON1 &= ~(1 << 7);
+    
+    BRGCON2 |= (1 << 0);    
+    BRGCON2 |= (1 << 1);
+    BRGCON2 &= ~(1 << 2);
+    BRGCON2 |= (1 << 3);
+    BRGCON2 &= ~(1 << 4);
+    BRGCON2 |= (1 << 5);
+    BRGCON2 &= ~(1 << 6);
+    BRGCON2 |= (1 << 7);
+    
+    BRGCON3 &= ~(1 << 0);
+    BRGCON3 |= (1 << 1);
+    BRGCON3 &= ~(1 << 2);
+    BRGCON3 &= ~(1 << 6);
+    
+    CANCON &= ~(1 << 7); // Set Normal Mode
+}
+
 void delay_ms (unsigned long ms) {
     long tmp;
     tmp = timems;
@@ -105,49 +148,44 @@ void main (void) {
     portinit();
     settimer();
     setad();
+    setcan();
     while (1) {
-        int RC2 = 0;
         ADCON0 |= (1 << 2);
-        if (ADRESH == 0) {
-            leuchtbalken = 0x00;
-            RC2 = 0;
-        } else if (ADRESH <= 11) {
-            leuchtbalken = 0x01;
-            RC2 = 0;
-        } else if (ADRESH <= 21) {
-            leuchtbalken = 0x03;
-            RC2 = 0;
-        } else if (ADRESH <= 31) {
-            leuchtbalken = 0x07;
-            RC2 = 0;
-        } else if (ADRESH <= 41) {
-            leuchtbalken = 0x0F;
-            RC2 = 0;
-        } else if (ADRESH <= 51) {
-            leuchtbalken = 0x1F;
-            RC2 = 0;
-        } else if (ADRESH <= 61) {
-            leuchtbalken = 0x3F;
-            RC2 = 0;
-        } else if (ADRESH <= 71) {
-            leuchtbalken = 0x7F;
-            RC2 = 0;
-        } else if (ADRESH <= 81) {
-            leuchtbalken = 0xFF;
-            RC2 = 0;
+        btn2 = (PORTB >> 4) & 1;
+        if (btn2 == 1) {  
+            if (ADRESH == 0) {
+                leuchtbalken = 0x00;
+            } else if (ADRESH <= 11) {
+                leuchtbalken = 0x01;
+            } else if (ADRESH <= 21) {
+                leuchtbalken = 0x03;
+            } else if (ADRESH <= 31) {
+                leuchtbalken = 0x07;
+            } else if (ADRESH <= 41) {
+                leuchtbalken = 0x0F;
+            } else if (ADRESH <= 51) {
+                leuchtbalken = 0x1F;
+            } else if (ADRESH <= 61) {
+                leuchtbalken = 0x3F;
+            } else if (ADRESH <= 71) {
+                leuchtbalken = 0x7F;
+            } else {
+                leuchtbalken = 0xFF;
+            }
+            LATD = leuchtbalken;
+            if (ADRESH > 81) {
+                LATC |= (1 << 2);
+            }
+            else {
+                LATC &= ~(1 << 2);
+            }
         } else {
-            leuchtbalken = 0xFF;
-            RC2 = 1;
-        }
-        LATD = leuchtbalken;
-        if (RC2 == 1) {
-            LATC |= (1 << 2);
-        }
-        else {
             LATC &= ~(1 << 2);
+            LATD = ADRESH;
         }
-    } 
-  
+    }
+}
+    
         
 //        int tmp;
 //        tmp = (ADCON0 >> 2) & 1;
@@ -183,4 +221,4 @@ void main (void) {
 //        }
 //       
 //    }
-}
+//}
