@@ -47,7 +47,7 @@ void settimer();
 void setad();
 void setcan();
 void delay_ms (unsigned long ms);
-void sendcandata (int senddata);
+void sendcandata (int senddata , int btn2 , int btn3);
 
 
 #pragma interrupt high_isr
@@ -154,16 +154,20 @@ void delay_ms (unsigned long ms) {
     }
 }
 
-void sendcandata (int senddata){
-    TXB0SIDH = 1;
-    TXB0SIDL = 0x40;
+void sendcandata (int senddata , int btn2 , int btn3){
+    TXB0SIDH = 0x0C;
+    TXB0SIDL = 0x80;
     TXB0D0 = senddata;
-    TXB0DLC = 0;
+    TXB0D1 = btn2;
+    TXB0D2 = btn3;
+    TXB0DLC = 3;
     TXB0DLC |= (1 << 0);
     TXB0CON = 11;
 }
 
 void main (void) {
+    unsigned long lasttime = 0;
+    
     portinit();
     settimer();
     setad();
@@ -180,6 +184,7 @@ void main (void) {
     
         ADCON0 |= (1 << 2);
         btn2 = (PORTB >> 4) & 1;
+        btn3 = (PORTB >> 5) & 1;
         if (RXB0D1 == 1) {  
             if (RXB0D0 == 0) {
                 leuchtbalken = 0x00;
@@ -216,6 +221,10 @@ void main (void) {
         } else {
             LATC &= ~(1 << 2);
             LATD = RXB0D0;
+        }
+        if ((timems - lasttime) >= 5) {
+            lasttime = timems;
+            sendcandata(ADRESH,btn2,btn3);
         }
     }
 }

@@ -47,7 +47,7 @@ void settimer();
 void setad();
 void setcan();
 void delay_ms (unsigned long ms);
-void sendcandata (int senddata , int messagecounter);
+void sendcandata (int senddata , int btn2 , int btn3);
 
 
 #pragma interrupt high_isr
@@ -154,12 +154,13 @@ void delay_ms (unsigned long ms) {
     }
 }
 
-void sendcandata (int senddata , int btn2){
+void sendcandata (int senddata , int btn2 , int btn3){
     TXB0SIDH = 1;
     TXB0SIDL = 0x40;
     TXB0D0 = senddata;
     TXB0D1 = btn2;
-    TXB0DLC = 2;
+    TXB0D2 = btn3;
+    TXB0DLC = 3;
     TXB0CON = 11;
 }
 
@@ -172,9 +173,10 @@ void main (void) {
     setcan();
     while (1) {        
         btn2 = (PORTB >> 4) & 1;
+        btn3 = (PORTB >> 5) & 1;
         if ((timems - lasttime) >= 5) {
             lasttime = timems;
-            sendcandata(ADRESH,btn2);
+            sendcandata(ADRESH,btn2,btn3);
         }
         
         ADCON0 |= (1 << 2);
