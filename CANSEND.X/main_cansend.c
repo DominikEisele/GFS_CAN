@@ -35,11 +35,13 @@ unsigned long counter = 0;
 int i = 0;
 int btn2;
 int btn3;
-unsigned long timems = 0;
+unsigned long time_ms = 0;
+unsigned long time_prev_ms = 0;
 unsigned long ms = 0;
 int pause = 0;
 long tmp = 0;
 int leuchtbalken = 0;
+unsigned int busoff = 0;
 
 
 void portinit();
@@ -57,7 +59,7 @@ void high_isr(void) {
   tmr2if = (PIR1 >> 1) & 1;
 
   if (tmr2ie && tmr2if) {
-    timems++;
+    time_ms++;
     PIR1 &= ~(1 << 1);  //Clear Flag
   }
 }
@@ -83,6 +85,7 @@ void portinit() {
 }
 
 void settimer() {
+    PR2 = 249;
     T2CON =0x4D; 
     INTCON  |= (1 << 7); // GIEH   = 1
     INTCON  |= (1 << 6); // GIEL   = 1
@@ -148,8 +151,8 @@ void setcan() {
 
 void delay_ms (unsigned long ms) {
     long tmp;
-    tmp = timems;
-    while(timems - tmp < ms) {
+    tmp = time_ms;
+    while(time_ms - tmp < ms) {
         _asm NOP _endasm
     }
 }
@@ -165,7 +168,9 @@ void sendcandata (int senddata , int btn2 , int btn3){
 }
 
 void main (void) {
-    unsigned long lasttime = 0;
+    unsigned long lasttime_cansend_ms = 0;
+    unsigned long lasttime_ledblink_ms = 0;
+    int blinklicht = 0xFF;
     
     portinit();
     settimer();
@@ -174,46 +179,67 @@ void main (void) {
     while (1) {        
         btn2 = (PORTB >> 4) & 1;
         btn3 = (PORTB >> 5) & 1;
-        if ((timems - lasttime) >= 5) {
-            lasttime = timems;
-            sendcandata(ADRESH,btn2,btn3);
+        
+        if ((COMSTAT >> 5) & 1) busoff = 1000;
+        
+        if (time_prev_ms != time_ms) { // 1ms rum
+          time_prev_ms = time_ms;
+          if (busoff > 0) busoff -= 1;
         }
         
+              
         ADCON0 |= (1 << 2);
-        if (btn2 == 1) {  
-            if (ADRESH == 0) {
-                leuchtbalken = 0x00;
-            } else if (ADRESH <= 11) {
-                leuchtbalken = 0x01;
-            } else if (ADRESH <= 21) {
-                leuchtbalken = 0x03;
-            } else if (ADRESH <= 31) {
-                leuchtbalken = 0x07;
-            } else if (ADRESH <= 41) {
-                leuchtbalken = 0x0F;
-            } else if (ADRESH <= 51) {
-                leuchtbalken = 0x1F;
-            } else if (ADRESH <= 61) {
-                leuchtbalken = 0x3F;
-            } else if (ADRESH <= 71) {
-                leuchtbalken = 0x7F;
+        
+        if (busoff == 0) {
+            if (btn2 == 1) {  
+                if (ADRESH == 0) {
+                    leuchtbalken = 0x00;
+                } else if (ADRESH <= 11) {
+                    leuchtbalken = 0x01;
+                } else if (ADRESH <= 21) {
+                    leuchtbalken = 0x03;
+                } else if (ADRESH <= 31) {
+                    leuchtbalken = 0x07;
+                } else if (ADRESH <= 41) {
+                    leuchtbalken = 0x0F;
+                } else if (ADRESH <= 51) {
+                    leuchtbalken = 0x1F;
+                } else if (ADRESH <= 61) {
+                    leuchtbalken = 0x3F;
+                } else if (ADRESH <= 71) {
+                    leuchtbalken = 0x7F;
+                } else {
+                    leuchtbalken = 0xFF;
+                }
+
+                LATD = leuchtbalken;
+
+                if (ADRESH > 81) {
+                    LATC |= (1 << 2);
+                }
+                else {
+                    LATC &= ~(1 << 2);
+                }
             } else {
-                leuchtbalken = 0xFF;
-            }
-  
-            LATD = leuchtbalken;
-            
-            if (ADRESH > 81) {
-                LATC |= (1 << 2);
-            }
-            else {
                 LATC &= ~(1 << 2);
+                LATD = ADRESH;
             }
         } else {
-            LATC &= ~(1 << 2);
-            LATD = ADRESH;
+            if ((time_ms - lasttime_ledblink_ms) > 500) {
+                blinklicht = ~blinklicht;
+                LATD = blinklicht;
+                LATC = blinklicht;
+                lasttime_ledblink_ms = time_ms;
+            }
+        }
+    
+        
+        if ((time_ms - lasttime_cansend_ms) >= 5) {
+            lasttime_cansend_ms = time_ms;
+            sendcandata(ADRESH,btn2,btn3);
         }
     }
+        
 }
     
         
@@ -240,10 +266,10 @@ void main (void) {
 //            pause = 1000;
 //        }
 //        LATD = lauflicht;
-//        if ((timems - tmp) > pause) {
+//        if ((time_ms - tmp) > pause) {
 //             lauflicht = lauflicht << 1;
 //             i++;
-//             tmp = timems;
+//             tmp = time_ms;
 //            }
 //         if (i > 7) {
 //            lauflicht = 0x01;
