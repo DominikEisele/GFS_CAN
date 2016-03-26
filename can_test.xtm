@@ -1,0 +1,155 @@
+[defaults]
+geometry=( 443 176 887 682 )
+is_maximized=false
+is_minimized=false
+workspace_width=887
+workspace_height=442
+main_window_settings="=0a=0a=0aToolbar,=0a[Toolbar,0,0,-1,-1,1]=0aMessage Window,=0a[Message Window,0,0,-1,126,1]=0a=0a=0a=0a=0a"
+main_window_settings_utf8="=0a=0a=0aToolbar,=0a[Toolbar,0,0,-1,-1,1]=0aMessage Window,=0a[Message Window,0,0,-1,126,1]=0a=0a=0a=0a=0a"
+triggers=( {triggers}( ) {trigger_count}0 {conditions}( ) {condition_count}0 )
+description_file_count=0
+workspaces=( ( {name}"Default Workspace" {id}0 ) )
+active_workspace=0
+
+[rt_log]
+sif="NONE"
+font_size=8
+col_params=( ( {section}0 {width}47 {index}0 {visible}true ) ( {section}1 {width}98 {index}1 {visible}true )
+             ( {section}2 {width}681 {index}2 {visible}true ) )
+mode_scroll_mode=true
+mode_delta_t=false
+
+[CAN]
+active=true
+index=1
+name="CAN 1"
+dummy_signals=( )
+bitrate=500000
+tseg1=11
+tseg2=4
+sjw=1
+samples=1
+silent_mode=false
+canfd_mode=0
+brs_enabled=false
+canfd_enabled=false
+brs_clock=80000000
+brs_prescaler=1
+brs_tseg1=2
+brs_tseg2=1
+brs_sjw=1
+channel="Kvaser Leaf Light HS #1 (Channel 1)"
+channel_user_name=""
+script_file=""
+script_file_utf8=""
+protocol_mode=0
+subsystem_bitrate=20000
+protocol_plugin_name=""
+candb_file_count=0
+channel_number=0
+connect_to_channel=""
+filter_std=( {extended_id}0 {block_all}0 {code}0 {mask}0 {active}1 )
+filter_ext=( {extended_id}1 {block_all}0 {code}0 {mask}0 {active}1 )
+
+[Trace]
+geometry=( 105 24 748 182 )
+title="Trace 1"
+title_utf8="Trace 1"
+wid=""
+update_rate=250
+index=1
+startup_hidden=false
+top_dock_config="[Toolbar <Trace 1>,0,0,-1,-1,1]=0a"
+bottom_dock_config="[CAN Signal Table <Trace 1>,0,0,-1,-1,0]=0a"
+maximized_qt=false
+minimized_qt=false
+maximized=false
+minimized=false
+detached=false
+workspace_id=0
+sif="CAN1"
+col_width_channel=40
+col_width_data=200
+col_width_time=104
+col_width_ascii=64
+col_width_number=48
+col_width_id=120
+col_width_dlc=37
+col_width_rate=80
+col_width_signals=200
+col_index_channel=0
+col_index_data=4
+col_index_time=2
+col_index_ascii=5
+col_index_number=6
+col_index_id=1
+col_index_dlc=3
+col_index_rate=7
+col_index_signals=8
+col_visible_channel=true
+col_visible_data=true
+col_visible_time=true
+col_visible_ascii=true
+col_visible_number=true
+col_visible_id=true
+col_visible_dlc=true
+col_visible_rate=true
+col_visible_signals=false
+mode_scroll_mode=false
+mode_delta_t=true
+mode_timing_analysis=false
+mode_candb_mode=false
+fmt_id_hex=false
+fmt_data_hex=true
+time_format=0
+filter_std=( {extended_id}0 {filter_type}1 {active}0 {filter_list}( ) )
+filter_ext=( {extended_id}1 {filter_type}1 {active}0 {filter_list}( ) )
+signal_table_visible=false
+signal_table=( {col_width_name}99 {col_width_raw}77 {col_width_phys}94 {col_width_unit}44 {col_width_range}87
+               )
+
+[CanSend]
+geometry=( 92 282 729 95 )
+title="CanSend 1"
+title_utf8="CanSend 1"
+wid=""
+update_rate=150
+index=1
+startup_hidden=false
+top_dock_config="[Toolbar <CanSend 1>,0,0,-1,-1,1]=0a"
+bottom_dock_config="[CAN Signal Table <CanSend 1>,0,0,-1,-1,0]=0a"
+maximized_qt=false
+minimized_qt=false
+maximized=false
+minimized=false
+detached=false
+workspace_id=0
+number_of_messages=1
+col_width_channel=62
+col_width_id=56
+col_width_dlc=37
+col_width_data=138
+col_width_rate=58
+col_width_count=44
+col_width_tmt=71
+col_width_key=100
+col_width_action=80
+col_width_comment=100
+col_width_trigger=100
+col_visible_channel=true
+col_visible_id=true
+col_visible_dlc=true
+col_visible_data=true
+col_visible_rate=true
+col_visible_count=true
+col_visible_tmt=true
+col_visible_key=true
+col_visible_action=true
+col_visible_comment=false
+col_visible_trigger=false
+messages=( ( {id}"200" {dlc}8 {data}"11 22 33 44 55 66 00 00" {canif}"CAN1" {onkey}4194392 {rate}0 {count}0
+             {comment}"" {trigger}" --- " ) )
+signal_table_visible=false
+signal_table=( {col_width_name}100 {col_width_raw}100 {col_width_phys}100 {col_width_unit}100 {col_width_range}100
+               )
+
