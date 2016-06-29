@@ -1,0 +1,309 @@
+\RequirePackage{etex}
+\documentclass{beamer}
+\usepackage[latin9]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{pictex}
+
+\title[Rechenwerk]{Digitales Rechenwerk}
+\author{Dominik Eisele}
+\institute[WSS]{Werner-Siemens-Schule}
+\date{\today}
+\subject{FTP}
+\keywords{FTP, File Transfer Protocol}
+
+\usetheme{Singapore}
+\usecolortheme{rose}
+\usefonttheme{serif}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
+\beamersetuncovermixins{\opaqueness<1>{25}}{\opaqueness<2->{15}}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{language=C}
+\lstset{numbers=left,
+	numberstyle=\tiny,
+	numbersep=5pt,
+	breaklines=true,
+	showstringspaces=false,
+	frame=l ,
+	xleftmargin=15pt,
+	xrightmargin=15pt,
+	basicstyle=\ttfamily\scriptsize,
+	stepnumber=1,
+	keywordstyle=\color{blue},		% keyword style
+	commentstyle=\color{dkgreen},	% comment style
+	stringstyle=\color{mauve}		% string literal style
+}
+
+%\AtBeginDocument{\addtobeamertemplate{block begin}{\setlength\abovedisplayskip{0pt}}}
+%\AtBeginDocument{\addtobeamertemplate{block begin}{\setlength\abovedisplayshortskip{0pt}}}
+
+\let\oldsqrt\sqrt 
+\def\sqrt{\mathpalette\DHLhksqrt}
+\def\DHLhksqrt#1#2{\setbox0=\hbox{$#1\oldsqrt{#2\,}$}\dimen0=\ht0
+\advance\dimen0-0.3\ht0
+%0.3 ist das Maß für die Hakenlänge, relativ zum Inhalt der Wurzel
+\setbox2=\hbox{\vrule height\ht0 depth -\dimen0}%
+{\box0\lower0.4pt\box2}}
+
+\setcounter{tocdepth}{1} 
+
+\begin{document}
+
+\begin{frame}
+	\titlepage
+\end{frame}
+
+\begin{frame}{Inhalt}
+	\tableofcontents
+\end{frame}
+
+
+\section{Rechnen mit dualen Zahlen}
+\subsection{Rechnen mit dualen Zahlen-dots}
+
+\begin{frame}{Rechnen mit Dualzahlen} 
+	Das Rechnen mit Dualzahlen verläuft nach den selben Rechenregeln wie das Rechnen mit Dezimalzahlen.
+\end{frame}
+
+\begin{frame}{Addition von Dualzahlen}
+	Rechenbeispiel für eine Addition mit Dual-Zahlen.
+	\begin{center}
+		\begin{tabular}{crcl}
+				&		 	       	 1 1 1 0 1 0 0 1 0 		 	  	\\
+		 +  		&				 0 0 1 1 1 0 1 0 0			  	\\\hline
+				&			      1 0 0 1 0 0 0 1 1 0			  
+		\end{tabular}
+	\end{center}
+\end{frame}
+
+
+\begin{frame}{Subtraktion von Dualzahlen}
+	Rechenbeispiel für eine Subtraktion mit Dual-Zahlen.
+	\begin{center}
+		\begin{tabular}{crcl}
+				&		 	       	  1 1 1 0 1 0 0 1 0 		 	  	\\
+		 -  		&				  0 0 1 1 1 0 1 0 0			  	\\\hline
+				&			          1 0 1 0 1 1 1 1 0			  
+		\end{tabular}
+	\end{center}
+\end{frame}
+
+
+\begin{frame}{Subtraktion mit Hilfe des Zweierkomplements}
+	Da, in der Digitaltechnik, für die Subtraktion von Dualzahlen keine logische Verknüpfung existiert, ist man gezwungen eine
+	Subtraktion in eine Addition umwandeln.
+		
+	\begin{align*}
+		\onslide<2->{2 - 6 &= (-4) \\} 
+		\onslide<3->{2 + \left(-6\right) &= (-4) \\}  
+	\end{align*}
+\end{frame}
+
+
+\begin{frame} 		
+	\frametitle{Subtraktion mit Hilfe des Zweierkomplements}
+		\hspace*{5mm} $ \underline{2 - 6 = \, ? }$ \\ \pause 
+		1. Schritt: In eine Dualzahl wandeln:\\  
+		\hspace*{5mm}  $ 2 - 6 \Rightarrow 10 - 110$\\ \pause
+		2. Schritt: Stellen auffüllen:\\ 
+		\hspace*{5mm} $ 0010 - 0110 =$ $ ? $\\\pause 
+		3. Schritt: Bits negieren:\\
+		\hspace*{5mm} $ 0110 \Rightarrow 1001$\\ \pause 
+		4. Schritt: Hinzuaddieren von 1:\\ 
+		\hspace*{5mm} $ 1001 + 0001 = 1010$\\ \pause
+		5. Schritt: Minuend und Zweierkomplement addieren:\\ 
+		\hspace*{5mm} $ 0010 + 1010 = 1100$\\ \pause
+		6. Schritt: Ergebnis negieren:\\ 
+		\hspace*{5mm} $ 100 \Rightarrow 011$\\ 
+		\end{frame}
+\begin{frame} 		
+	\frametitle{Subtraktion mit Hilfe des Zweierkomplements}
+		7. Schritt: Hinzuaddieren von 1:\\
+		\hspace*{5mm} $ 011 + 001 = 100$\\ \pause 
+		8. Schritt: In eine Dezimalzahl wandeln:\\ 
+		\hspace*{5mm} $ 100 \Rightarrow 4$ ; da das höchstwertigste Bit 1 ist: \\ \hspace*{5mm} Endergebnis $= -4$\\ \pause
+		9. Schritt: Ergebnis:\\ 
+		\hspace*{5mm} $ \underline{2 - 6 = \, (-4) }$
+\end{frame}
+
+
+\begin{frame}{Multiplikation von Dualzahlen}
+	\begin{itemize}
+		\item Es werden Produkte mit den einzelnen Stellen des Multiplikators gebildet,sie werden anschließend Stellenrichtig addiert. \\ \pause 
+		\item Die Stellen des Multiplikators können nur Zahlenwerte zwischen Null und Eins annehmen \\ \pause
+		\item $\rightarrow$ Dies kann mit einer einfachen UND-Verknüpfung gelöst werden.
+	\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Multiplikation von Dualzahlen}
+	Rechenbeispiel für eine Multiplikation mit Dual-Zahlen.
+	\begin{center}
+		\begin{tabular}{crcl}
+				&		 	       	  1 0 1 1 $\times$ 1 0 1 0	 	  	\\ \hline
+				&							1011000			\\
+				&							000000			\\
+				&							10110			\\
+		 +		&							0000			  	\\ \hline
+				&						        1101110		  
+		\end{tabular}
+	\end{center}
+\end{frame}
+
+\section{Rechenwerk}
+\subsection{Umsetzung-dots}
+\begin{frame}{Halbaddierer}
+	\begin{columns}
+		\begin{column}{0.35\linewidth}
+			Ein Halbaddierer besitzt zwei Ein-, und zwei Ausgänge. An die Eingänge \emph{x} und \emph{y} werden jeweils die 
+			Ziffern angelegt die man addieren möchte. An dem ersten Ausgang liegt die Summe $s$ der Addition an,
+			am zweiten Ausgang der Übertrag $c$.
+		\end{column}
+		
+		\begin{column}{0.65\linewidth}
+			\begin{table}[h]
+				\center
+				\begin{tabular}{c|c|c|c}
+					\ \textbf{x} \ 	& \ \textbf{y} \		& \ \textbf{Übertrag c} \ & \ \textbf{Summe s} \ 	 	\\ \hline
+					0 	& 0 		& 0          			& 0       			\\ \hline
+					0 	& 1 		& 0          			& 1       			\\ \hline
+					1 	& 0		& 0          			& 1      			 \\ \hline
+					1	& 1 		& 1          			& 0      			 \\
+				\end{tabular}
+				\label{tab:halbaddierer}
+			\end{table}
+		\end{column}
+	\end{columns}
+\end{frame}
+
+
+\begin{frame}{Schaltbild Halbaddierer}	
+	\begin{columns}
+		\begin{column}{0.5\linewidth}
+			In Schaltungen wird der Halbaddierer aus zwei Bauteilen zusammengesetzt, ein Exklusiv-ODER (XOR) und ein
+			UND (AND).
+		\end{column}
+		
+		\begin{column}{0.5\linewidth}
+			\begin{figure}
+				\center
+				\input skizze_halbaddierer
+				\label{fig:halbaddierer}
+			\end{figure}
+		\end{column}
+	\end{columns}
+\end{frame}
+
+
+\begin{frame}{Volladdierer}
+	\begin{columns}
+		\begin{column}{0.52\linewidth}
+			\begin{itemize}
+				\item Der Volladdierer besteht aus zwei Halbaddierern und einem ODER. \\ \pause
+				\item Der Volladdierer hat einen zusätzlichen Eingang ($c_{in}$), man kann den Übertrag aus einer vorhergegangenen Addition
+					mit einbeziehen. \\ \pause
+				\item Man kann mehrere Volladdierer kaskadieren um größere Zahlen miteinander zu addieren.
+			\end{itemize}
+		\end{column}
+		
+		\begin{column}{0.48\linewidth}
+			\begin{table}
+				\begin{tabular}{c|c|c|c|c}
+					\ $\mathbf{x}$ \ & \ $\mathbf{y}$ \ & \ $\mathbf{c_{in}}$ \ & \ $\mathbf{c_{out}}$ \ & \ $\mathbf{s}$ \ \\ \hline
+					0          & 0          & 0            & 0             & 0                              \\ \hline
+					0          & 0          & 1            & 0             & 1                              \\ \hline
+					0          & 1          & 0            & 0             & 1                              \\ \hline
+					0          & 1          & 1            & 1             & 0                              \\ \hline
+					1          & 0          & 0            & 0             & 1                              \\ \hline
+					1          & 0          & 1            & 1             & 0                              \\ \hline
+					1          & 1          & 0            & 1             & 0                              \\ \hline
+					1          & 1          & 1            & 1             & 1
+				\end{tabular}
+				\label{tab:volladdierer}
+			\end{table}
+		\end{column}
+	\end{columns}
+\end{frame}
+
+
+\begin{frame}{Schaltbild Volladdierer}	
+	In Schaltungen wird der Halbaddierer aus zwei Bauteilen zusammengesetzt, ein Exklusiv-ODER (XOR) und ein UND (AND).
+	\begin{figure}
+		\center
+		\input skizze_volladdierer
+		\label{fig:volladdierer}
+	\end{figure}
+\end{frame}
+
+
+\begin{frame}{Subtrahierer}
+		Beim Subtrahierer wird der Volladdierer durch einen Steuereingang erweitert. An diesem legt man für eine Addition eine
+		$0$, und für eine Subtraktion eine $1$ an. Durch diesen Steuereingang wird das Zweierkomplement gebildet.
+		\begin{figure}
+			\input skizze_volladdierer_steuerbar
+			\label{fig:steuerbarer_volladdierer}
+		\end{figure}
+\end{frame}
+
+
+\begin{frame}{Multiplizierer}
+		\begin{itemize}
+		\item Der Multiplizierer kann zwei acht Bit Zahlen miteinander multiplizieren.\\ \pause
+		\item Dazu	wird die Zahl an ein Schieberegister angelegt, sodass sie bei jedem Takt um eine Stelle verschoben 
+		werden kann.\\ \pause
+		\item Die höchstwertigste Ziffer des Multiplikators wird abgegriffen, und mit dem Multiplikant multipliziert. \\ \pause
+		\item Um die Produkte Stellenrichtig zu addieren werden die Zwischenergebnisse ebenfalls verschoben. \\ \pause
+		\item Das Produkt erhält man, nach acht Takten Rechenzeit.
+		\end{itemize}
+\end{frame}
+
+
+\begin{frame}{BCD-Eingabe}
+		\begin{itemize}
+		\item Die Eingabe erfolgt über ein ASCII-Feld. \\ \pause
+		\item Bei einer Eingabe von einer Ziffer im Bereich 0 bis 9, liegt die Ziffer BCD codiert an den Ausgänge $D_{0}$ bis $D_{3}$ an\\ \pause
+		\item  Nach jedem Tastendruck wird die Ziffer in ein Register übernommen, man kann an ihren Ausgängen die Zahl von 0 bis
+			 99 abgreifen. 
+		\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Umwandlung}
+		\begin{itemize}
+		\item Für die Wandlung werden zwei Zähler und ein Wandler benötigt.\\ \pause
+		\item Der erste Zähler ist ein BCD-Zähler, der zweite ein Binär-Zähler.\\ \pause
+		\item  Beide Zähler haben den selben Clock.\\ \pause
+		\item  Der Vergleicher vergleicht das eingegebene Signal mit dem BCD-Zähler. \\ \pause
+		\item  Sind beide Signale identisch wird der Clock unterbrochen.\\ \pause
+		\item  Man kann das Binär-Ergebnis am Ausgang des Binär-Zählers ablesen.
+		\end{itemize}
+\end{frame}
+
+
+\begin{frame}{7-Segment-Anzeige}
+		\begin{itemize}
+		\item Das Endergebnis wird Ziffer für Ziffer auf ein 7-Segment-Decoder gegeben.\\ \pause
+		\item Die Ausgänge des 7-Segment-Decoders werden auf die Eingänge einer 7-Segment-Anzeige gegeben.
+		\end{itemize}
+\end{frame}
+
+
+\section{Quellen}
+\subsection{Quellen-dots}
+\begin{frame}
+	\begin{itemize}
+		\item Junior Computer - Der einfache Einstieg in die faszinierende Computertechnik (1980)
+		\item www.elektronik-kompendium.de/sites/dig/1708061.htm (11.04.2015)
+		\item de.wikipedia.org/wiki/Volladdierer (16.05.2015)
+	\end{itemize}
+\end{frame}
+
+
+\end{document}

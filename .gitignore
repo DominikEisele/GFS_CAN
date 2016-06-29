@@ -85,3 +85,5 @@ $RECYCLE.BIN/
 PIC18F458.X/main.err
 *.xml
 PIC18F458.X/nbproject/private/configurations.xml
+*.log
+*.aux
