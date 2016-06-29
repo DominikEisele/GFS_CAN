@@ -88,3 +88,7 @@ PIC18F458.X/nbproject/private/configurations.xml
 *.log
 *.aux
 *.gz(busy)
+*.gz
+*.toc
+*.nav
+*.snm

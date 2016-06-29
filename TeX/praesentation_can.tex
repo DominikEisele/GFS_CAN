@@ -7,16 +7,15 @@
 \usepackage{color}
 \usepackage{pictex}
 
-\title[Rechenwerk]{Digitales Rechenwerk}
+\title[CAN]{Controller Area Network}
 \author{Dominik Eisele}
 \institute[WSS]{Werner-Siemens-Schule}
 \date{\today}
-\subject{FTP}
-\keywords{FTP, File Transfer Protocol}
+\subject{CAN}
+\keywords{CAN, Controller Area Network}
 
 \usetheme{Singapore}
 \usecolortheme{rose}
-\usefonttheme{serif}
 \setbeamertemplate{navigation symbols}{}
 \setbeamertemplate{footline}[frame number]
 \beamersetuncovermixins{\opaqueness<1>{25}}{\opaqueness<2->{15}}
@@ -52,7 +51,7 @@
 \setbox2=\hbox{\vrule height\ht0 depth -\dimen0}%
 {\box0\lower0.4pt\box2}}
 
-\setcounter{tocdepth}{1} 
+\setcounter{tocdepth}{1}
 
 \begin{document}
 
@@ -65,8 +64,8 @@
 \end{frame}
 
 
-\section{Rechnen mit dualen Zahlen}
-\subsection{Rechnen mit dualen Zahlen-dots}
+\section{Allgemeine Informationen}
+\subsection{Allgemeine Informationen-dots}
 
 \begin{frame}{Rechnen mit Dualzahlen} 
 	Das Rechnen mit Dualzahlen verläuft nach den selben Rechenregeln wie das Rechnen mit Dezimalzahlen.
@@ -157,8 +156,8 @@
 	\end{center}
 \end{frame}
 
-\section{Rechenwerk}
-\subsection{Umsetzung-dots}
+\section{Protokoll}
+\subsection{Protokoll-dots}
 \begin{frame}{Halbaddierer}
 	\begin{columns}
 		\begin{column}{0.35\linewidth}
@@ -192,11 +191,11 @@
 		\end{column}
 		
 		\begin{column}{0.5\linewidth}
-			\begin{figure}
-				\center
-				\input skizze_halbaddierer
-				\label{fig:halbaddierer}
-			\end{figure}
+%			\begin{figure}
+%				\center
+%				\input skizze_halbaddierer
+%				\label{fig:halbaddierer}
+%			\end{figure}
 		\end{column}
 	\end{columns}
 \end{frame}
@@ -235,21 +234,21 @@
 
 \begin{frame}{Schaltbild Volladdierer}	
 	In Schaltungen wird der Halbaddierer aus zwei Bauteilen zusammengesetzt, ein Exklusiv-ODER (XOR) und ein UND (AND).
-	\begin{figure}
-		\center
-		\input skizze_volladdierer
-		\label{fig:volladdierer}
-	\end{figure}
+%	\begin{figure}
+%		\center
+%		\input skizze_volladdierer
+%		\label{fig:volladdierer}
+%	\end{figure}
 \end{frame}
 
 
 \begin{frame}{Subtrahierer}
 		Beim Subtrahierer wird der Volladdierer durch einen Steuereingang erweitert. An diesem legt man für eine Addition eine
 		$0$, und für eine Subtraktion eine $1$ an. Durch diesen Steuereingang wird das Zweierkomplement gebildet.
-		\begin{figure}
-			\input skizze_volladdierer_steuerbar
-			\label{fig:steuerbarer_volladdierer}
-		\end{figure}
+%		\begin{figure}
+%			\input skizze_volladdierer_steuerbar
+%			\label{fig:steuerbarer_volladdierer}
+%		\end{figure}
 \end{frame}
 
 
@@ -293,6 +292,9 @@
 		\item Die Ausgänge des 7-Segment-Decoders werden auf die Eingänge einer 7-Segment-Anzeige gegeben.
 		\end{itemize}
 \end{frame}
+
+\section{Anwendungen}
+\subsection{Anwendungen-dots}
 
 
 \section{Quellen}
