@@ -170,7 +170,7 @@ void sendcandata (int senddata , int btn2 , int btn3){
 void main (void) {
     unsigned long lasttime_cansend_ms = 0;
     unsigned long lasttime_ledblink_ms = 0;
-    int blinklicht = 0xFF;
+    int blinklicht = 0x00;
     
     portinit();
     settimer();
