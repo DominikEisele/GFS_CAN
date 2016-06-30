@@ -1,0 +1,32 @@
+\begin{figure}[h!]
+	\begin{tikzpicture}[xscale=0.8,yscale=0.6]
+		% Achsen
+		\draw[-] (0,0) -- (10,0) node[below] {\begin{tabular}{ll} \\  Leitungslänge in \si{\metre} \end{tabular}};
+		\draw[-] (0,0) -- (0,9) node[below,left] {};
+		\draw[-] (-1,4.5) -- (-1,4.5) node[left] {\begin{tabular}{l} k\\B\\i\\t\\s\\/\\s\end{tabular}};
+		%Pfeile
+		\draw[->] (0,0) -- (10,0);
+		\draw[->] (0,0) -- (0,9);
+		% Achsbeschriftung
+		\foreach \x in {,1,...,9} \draw (\x,0.05) -- (\x,-0.05) node [below] {};
+		\foreach \y in {1,...,8} \draw (0.1,\y) -- (-0.1,\y) node [left] {};		
+		\draw (0,0) -- (0,0) node [below] {0};
+		\draw (1,0) -- (1,0) node [below] {10};
+		\draw (2,0) -- (2,0) node [below] {50};
+		\draw (3,0) -- (3,0) node [below] {100};
+		\draw (4,0) -- (4,0) node [below] {200};
+		\draw (6,0) -- (6,0) node [below] {1000};
+		\draw (9,0) -- (9,0) node [below] {10000};
+		\draw (0,0) -- (0,0) node [left] {0};
+		\draw (0,1) -- (0,1) node [left] {5};
+		\draw (0,2) -- (0,2) node [left] {10};
+		\draw (0,3) -- (0,3) node [left] {20};
+		\draw (0,4) -- (0,4) node [left] {50};
+		\draw (0,5) -- (0,5) node [left] {100};
+		\draw (0,6) -- (0,6) node [left] {200};
+		\draw (0,7) -- (0,7) node [left] {500};
+		\draw (0,8) -- (0,8) node [left] {1000};
+		\draw[smooth,samples=500,domain=0.0:8.24] plot(\x,{-0.062568 * \x^2 + -0.294511 * \x + 8.190863});
+	\end{tikzpicture}
+	\label{fig:Diagramm}
+	\end{figure}
