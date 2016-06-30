@@ -227,7 +227,7 @@
 		\item Acknowledge Field wird rezessiv gesendet, und bei korrektem Empfang von einem Empfäner dominant überschrieben
 		\item wenn ACK rezissiv ist, wird die Nachricht erneut übertragen
 		\item wird bei einem Empfänger ein Fehler erkannt, das ACK Bit ist aber gesetzt, so sendet er im Anschluss ein Error-Flag um die Nachricht erneut
-		anzufordern, und die Systemweite Datenkonsistenz zu wahren
+		anzufordern, und die systemweite Datenkonsistenz zu wahren
 	\end{itemize}
 \end{frame}
 
@@ -276,15 +276,22 @@
 
 \begin{frame}{Fehlermeldung}
 	\begin{itemize}
+		\item jeder Empfänger versucht einen Fehler zu erkennen und diesen umgehend zu dementieren
 		\item Fehlermeldungen werden sofort nach erkennen des Fehlers gesendet
-		\item ausgenommen hiervon ist das CRC Feld um die ACK Funktion aufrcht zu erhalten
+		\item ausgenommen hiervon ist das CRC-Feld um die ACK Funktion aufrecht zu erhalten
+		\item Fehlermeldungen bestehen aus 6 gleichen Bits (rezissiv oder dominant)
+		\item das Error-Flag zerstört den Bus Traffic
+		\item wenn ein Fehler erkannt wird werden bei allen Empfängern die Nachrichten gelöscht, um eine systemweite Datenkonsistenz aufrecht zu erhalten
 	\end{itemize}
 \end{frame}
 
 \begin{frame}{Bus Zustände}
 	\begin{itemize}
-		\item
-		\item
+		\item jeder Knoten hat zwei Error Counter ( Transmit Error Counter und Error Counter)
+		\item sendet ein Knoten ein Error Flag erhöht sich der Counter um 8, empfängt er ein Flag erhöht er sich um 1, bei korrektem Empfang wird er um 1 dekrementiert
+		\item ist der Counter kleiner 127 sendet er als Error Flag 6 dominiante Bits, die den Bus überschreiben und somit alle Nachrichten überschreiben
+		\item ist der Counter größer 127 werden 6 rezessive Bits gesendet, sodass der Bus nicht durchgehend gestört wird
+		\item ist der Counter bei 255 angelangt darf der Teilnehmer nicht mehr am Bus teilnehmen
 	\end{itemize}
 \end{frame}
 
@@ -296,8 +303,17 @@
 
 \section{Anwendungen}
 \subsection{Anwendungen-dots}
-\begin{frame}{}
-
+\begin{frame}{Anwendungsbeispiele}
+	\begin{itemize}
+		\item Automobilindustrie
+		\item Automatisierungstechnik
+		\item Aufzugsanlagen
+		\item Medizintechnik
+		\item Flugzeugtechnik
+		\item Raumfahrttechnik
+		\item Schienenfahrzeuge
+		\item Schiffbau 
+	\end{itemize}
 \end{frame}
 
 
@@ -308,6 +324,8 @@
 		\item Konrad Etschberger - CAN Controller-Area-Network Grundlegen, Protokolle, Bausteine, Anwedungen
 		\item Praxis Profiline - Controller-Area-Network CAN in Automation (CiA)
 		\item elearning.vector.com (30.06.2016)
+		\item kvaser.com (30.06.16)
+		\item wikipedia.com (30.06.16)
 	\end{itemize}
 \end{frame}
 
