@@ -45,13 +45,15 @@
 %\AtBeginDocument{\addtobeamertemplate{block begin}{\setlength\abovedisplayskip{0pt}}}
 %\AtBeginDocument{\addtobeamertemplate{block begin}{\setlength\abovedisplayshortskip{0pt}}}
 
-\let\oldsqrt\sqrt 
+\let\oldsqrt\sqrt
 \def\sqrt{\mathpalette\DHLhksqrt}
 \def\DHLhksqrt#1#2{\setbox0=\hbox{$#1\oldsqrt{#2\,}$}\dimen0=\ht0
 \advance\dimen0-0.3\ht0
 %0.3 ist das Maß für die Hakenlänge, relativ zum Inhalt der Wurzel
 \setbox2=\hbox{\vrule height\ht0 depth -\dimen0}%
 {\box0\lower0.4pt\box2}}
+
+%\include{bild_ganze_folie.tex}
 
 \setcounter{tocdepth}{1}
 
@@ -69,18 +71,18 @@
 \section{Allgemeine Informationen}
 \subsection{Allgemeine Informationen-dots}
 
-\begin{frame}{Geschichte} 
+\begin{frame}{Geschichte}
 	\begin{itemize}
-		\item 1983 von Bosch als serielles Feldbussystem entwickelt\\ \pause
-		\item Ziel war die Reduzierung der Kabelbaumlänge in Fahrzeugen \\ \pause
-		\item Zertifiziert nach  ISO 11898-2 und  ISO 11898-3 (High- und Low-Speed CAN) \\ \pause
-		\item CAN besitzt eine sehr sichere Datenübertragung, welche Echtzeitanforderungen gerecht wird 
+		\item 1983 von Bosch als serielles Feldbussystem entwickelt
+		\item Ziel war die Reduzierung der Kabelbaumlänge in Fahrzeugen
+		\item Zertifiziert nach  ISO 11898-2 und  ISO 11898-3 (High- und Low-Speed CAN)
+		\item CAN besitzt eine sehr sichere Datenübertragung, welche Echtzeitanforderungen gerecht wird
 	\end{itemize}
 \end{frame}
 
 \begin{frame}{Aufbau}
 	\begin{figure}
-		\includegraphics[width=\linewidth]{can_anschluss.PNG}
+		\includegraphics[height=0.8\textheight]{can_anschluss.PNG}
 		\label{fig:aufbau}
 	\end{figure}
 \end{frame}
@@ -102,10 +104,10 @@
 
 \begin{frame}{Arbitrierung}
 	\begin{itemize}
-		\item CAN ist ein Multimasterbus, d.h. Teilnehmer müssen selbst entscheiden wann sie senden \\ \pause
-		\item zum Einsatz kommt daher dass Carrier Sense Multiple Access/Collision Avoidance (CSMA/CA) Verfahren \\ \pause
-		\item wenn zwei Teilnehmer gleichzeitig senden kommt die bitweise Arbitrierung zum Einsatz \\ \pause
-		\item bei der Arbitierung werden die Identifier gleichzeitig gesendet und der Buspegel mit dem Sendepegel verglichen\\ \pause
+		\item CAN ist ein Multimasterbus, d.h. Teilnehmer müssen selbst entscheiden wann sie senden
+		\item zum Einsatz kommt daher dass Carrier Sense Multiple Access/Collision Avoidance (CSMA/CA) Verfahren
+		\item wenn zwei Teilnehmer gleichzeitig senden kommt die bitweise Arbitrierung zum Einsatz
+		\item bei der Arbitierung werden die Identifier gleichzeitig gesendet und der Buspegel mit dem Sendepegel verglichen
 		\item sendet ein Teilnehmer ein dominantes und ein anderer ein rezessives Bit wird der Buspegel dominant (logische 0)
 	\end{itemize}
 \end{frame}
@@ -128,15 +130,174 @@
 
 \section{Protokoll}
 \subsection{Protokoll-dots}
-\begin{frame}{Aufbau }
-dfsg
+\begin{frame}{CAN-Frame}
+	\begin{figure}
+		\includegraphics[width=\linewidth]{frame.PNG}
+		\label{fig:frame}
+	\end{figure}
 \end{frame}
+
+\begin{frame}{CAN-Frame}
+	\begin{figure}
+		\includegraphics[width=\linewidth]{frame.PNG}
+		\label{fig:frame}
+	\end{figure}
+	\begin{itemize}
+		\item Start of Frame Bit ist ein dominantes Bit dass den Beginn einer Nachricht markiert
+		\item wird zur zeitlichen Synchronisation der Knoten genutzt
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{CAN-Frame}
+	\begin{figure}
+		\includegraphics[width=\linewidth]{frame.PNG}
+		\label{fig:frame}
+	\end{figure}
+	\begin{itemize}
+		\item Identifier ist 11\ bit lang
+		\item Extended Identifier hat 18 Zusatzbits
+		\item Identifier markieren die Priorität der Nachricht
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{CAN-Frame}
+	\begin{figure}
+		\includegraphics[width=\linewidth]{frame.PNG}
+		\label{fig:frame}
+	\end{figure}
+	\begin{itemize}
+		\item Remote Transmission Request Bit
+		\item besitzt kein Data Field, sondern fordert Nachricht mit gleicher ID an wenn RTR rezessiv
+		\item problematisch, da es unterschiedliche Implementierungen gibt
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{CAN-Frame}
+	\begin{figure}
+		\includegraphics[width=\linewidth]{frame.PNG}
+		\label{fig:frame}
+	\end{figure}
+	\begin{itemize}
+		\item Identifier Extension Bit ist normal dominant
+		\item wenn IDE rezessiv folgt erweiterter Identifier (18\ Bit)
+		\item Protokolleffektivität wird verschlechtert wenn IDE verwendet wird
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{CAN-Frame}
+	\begin{figure}
+		\includegraphics[width=\linewidth]{frame.PNG}
+		\label{fig:frame}
+	\end{figure}
+	\begin{itemize}
+		\item Data Length Code gibt die Länge des Data Field an
+		\item DLC sind 4\ Bit
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{CAN-Frame}
+	\begin{figure}
+		\includegraphics[width=\linewidth]{frame.PNG}
+		\label{fig:frame}
+	\end{figure}
+	\begin{itemize}
+		\item Data Field beinhaltet die Daten
+		\item Länge wird in DLC von 0 bis 8 Byte festgesetzt
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{CAN-Frame}
+	\begin{figure}
+		\includegraphics[width=\linewidth]{frame.PNG}
+		\label{fig:frame}
+	\end{figure}
+	\begin{itemize}
+		\item Cyclic Redundancy Check is eine 15\ Bit lange Prüfsequenz
+		\item Mit der, in der Prüfsequenz enthaltenen redundanten Information kann ein Empfänger prüfen, ob die Nachricht verfälscht wurde.
+		\item wird von rezissivem Delimiter-(DEL) Bit begrenzt
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{CAN-Frame}
+	\begin{figure}
+		\includegraphics[width=\linewidth]{frame.PNG}
+		\label{fig:frame}
+	\end{figure}
+	\begin{itemize}
+		\item Acknowledge Field wird rezessiv gesendet, und bei korrektem Empfang von einem Empfäner dominant überschrieben
+		\item wenn ACK rezissiv ist, wird die Nachricht erneut übertragen
+		\item wird bei einem Empfänger ein Fehler erkannt, das ACK Bit ist aber gesetzt, so sendet er im Anschluss ein Error-Flag um die Nachricht erneut
+		anzufordern, und die Systemweite Datenkonsistenz zu wahren
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{CAN-Frame}
+	\begin{figure}
+		\includegraphics[width=\linewidth]{frame.PNG}
+		\label{fig:frame}
+	\end{figure}
+	\begin{itemize}
+		\item Delimiter begrenzt ACK-Field rezissiv
+		\item wird bei lokalem Fehler eines Empfängers mit Error-Flag überschrieben, sodass die Nachricht erneut gesendet wird
+		\item dient der Unterscheidung zwischen Error-Flag und ACK-Field Ende
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{CAN-Frame}
+	\begin{figure}
+		\includegraphics[width=\linewidth]{frame.PNG}
+		\label{fig:frame}
+	\end{figure}
+	\begin{itemize}
+		\item End of Frame Sequenz wird am Ende jeder Nachricht gesendet und besteht aus 8 rezessiven Bits
+		\item lange Sequenz nötig um Empfängern die Möglichkeit zu geben Fehler zu erkennen und zu Melden
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Bit Stuffing}
+	\begin{itemize}
+		\item nach 5 gleichen Bits muss ein inverses Bit eingefügt werden
+		\item dient der Nachsynchronisierung der Busteilnehmer, da sie aufgrund ungenauen Taktzeiten der ICs auseinanderdriften können
+		\item dient auserdem der Unterscheidung von Errorflags
+		\item EOF ist vom Bitstuffing ausgenommen
+		\item die Stopf-Bits werden vom Transmitter herausgefiltert
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Fehlererkennung}
+	\begin{itemize}
+		\item Bit Monitoring
+		\item Bit Stuffing
+		\item Frame Check
+		\item Acknowledgement Check
+		\item Cyclic Redundancy Check
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Fehlermeldung}
+	\begin{itemize}
+		\item Fehlermeldungen werden sofort nach erkennen des Fehlers gesendet
+		\item ausgenommen hiervon ist das CRC Feld um die ACK Funktion aufrcht zu erhalten
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Bus Zustände}
+	\begin{itemize}
+		\item
+		\item
+	\end{itemize}
+\end{frame}
+
+
+
+
+
 
 
 \section{Anwendungen}
 \subsection{Anwendungen-dots}
-\begin{frame}{Aufbau }
-dfsg
+\begin{frame}{}
+
 \end{frame}
 
 

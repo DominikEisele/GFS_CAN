@@ -1,0 +1,44 @@
+\newif\ifsidebartheme
+\sidebarthemetrue
+
+\newdimen\contentheight
+\newdimen\contentwidth
+\newdimen\contentleft
+\newdimen\contentbottom
+\makeatletter
+\newcommand*{\calculatespace}{%
+\contentheight=\paperheight%
+\ifx\beamer@frametitle\@empty%
+    \setbox\@tempboxa=\box\voidb@x%
+  \else%
+    \setbox\@tempboxa=\vbox{%
+      \vbox{}%
+      {\parskip0pt\usebeamertemplate***{frametitle}}%
+    }%
+    \ifsidebartheme%
+      \advance\contentheight by-1em%
+    \fi%
+  \fi%
+\advance\contentheight by-\ht\@tempboxa%
+\advance\contentheight by-\dp\@tempboxa%
+\advance\contentheight by-\beamer@frametopskip%
+\ifbeamer@plainframe%
+\contentbottom=0pt%
+\else%
+\advance\contentheight by-\headheight%
+\advance\contentheight by\headdp%
+\advance\contentheight by-\footheight%
+\advance\contentheight by4pt%
+\contentbottom=\footheight%
+\advance\contentbottom by-4pt%
+\fi%
+\contentwidth=\paperwidth%
+\ifbeamer@plainframe%
+\contentleft=0pt%
+\else%
+\advance\contentwidth by-\beamer@rightsidebar%
+\advance\contentwidth by-\beamer@leftsidebar\relax%
+\contentleft=\beamer@leftsidebar%
+\fi%
+}
+\makeatother
