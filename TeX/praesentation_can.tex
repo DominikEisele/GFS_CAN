@@ -9,7 +9,7 @@
 \usepackage{tikz}
 \usepackage{siunitx}
 
-\title[CAN]{Controller Area Network}
+\title[CAN]{CAN - Controller Area Network}
 \author{Dominik Eisele}
 \institute[WSS]{Werner-Siemens-Schule}
 \date{\today}
@@ -82,7 +82,7 @@
 
 \begin{frame}{Aufbau}
 	\begin{figure}
-		\includegraphics[height=0.8\textheight]{can_anschluss.PNG}
+		\includegraphics[height=0.7\textheight]{can_anschluss.PNG}
 		\label{fig:aufbau}
 	\end{figure}
 \end{frame}
@@ -90,14 +90,14 @@
 
 \begin{frame}{CAN-Buspegel}
 	\begin{figure}
-		\includegraphics[scale=0.55]{can_highspeed.PNG}
+		\includegraphics[scale=0.7]{can_highspeed.PNG}
 		\label{fig:highspeed}
 	\end{figure}
 \end{frame}
 
 \begin{frame}{CAN-Buspegel}
 	\begin{figure}
-		\includegraphics[scale=0.55]{can_lowspeed.PNG}
+		\includegraphics[scale=0.7]{can_lowspeed.PNG}
 		\label{fig:lowspeed}
 	\end{figure}
 \end{frame}
@@ -105,9 +105,9 @@
 \begin{frame}{Arbitrierung}
 	\begin{itemize}
 		\item CAN ist ein Multimasterbus, d.h. Teilnehmer müssen selbst entscheiden wann sie senden
-		\item zum Einsatz kommt daher dass Carrier Sense Multiple Access/Collision Avoidance (CSMA/CA) Verfahren
+		\item zum Einsatz kommt daher dass Carrier Sense Multiple Access/Collision Resolution (CSMA/CR) Verfahren
 		\item wenn zwei Teilnehmer gleichzeitig senden kommt die bitweise Arbitrierung zum Einsatz
-		\item bei der Arbitierung werden die Identifier gleichzeitig gesendet und der Buspegel mit dem Sendepegel verglichen
+		\item bei der Arbitrierung werden die Identifier gleichzeitig gesendet und der Buspegel mit dem Sendepegel verglichen
 		\item sendet ein Teilnehmer ein dominantes und ein anderer ein rezessives Bit wird der Buspegel dominant (logische 0)
 	\end{itemize}
 \end{frame}
@@ -138,6 +138,7 @@
 \end{frame}
 
 \begin{frame}{CAN-Frame}
+	Start of Frame(SOF):
 	\begin{figure}
 		\includegraphics[width=\linewidth]{frame.PNG}
 		\label{fig:frame}
@@ -149,6 +150,7 @@
 \end{frame}
 
 \begin{frame}{CAN-Frame}
+	Identifier:
 	\begin{figure}
 		\includegraphics[width=\linewidth]{frame.PNG}
 		\label{fig:frame}
@@ -161,6 +163,7 @@
 \end{frame}
 
 \begin{frame}{CAN-Frame}
+	Remote Transmission Request (RTR):
 	\begin{figure}
 		\includegraphics[width=\linewidth]{frame.PNG}
 		\label{fig:frame}
@@ -168,11 +171,11 @@
 	\begin{itemize}
 		\item Remote Transmission Request Bit
 		\item besitzt kein Data Field, sondern fordert Nachricht mit gleicher ID an wenn RTR rezessiv
-		\item problematisch, da es unterschiedliche Implementierungen gibt
 	\end{itemize}
 \end{frame}
 
 \begin{frame}{CAN-Frame}
+	Identifier Extension (IDE):
 	\begin{figure}
 		\includegraphics[width=\linewidth]{frame.PNG}
 		\label{fig:frame}
@@ -180,11 +183,11 @@
 	\begin{itemize}
 		\item Identifier Extension Bit ist normal dominant
 		\item wenn IDE rezessiv folgt erweiterter Identifier (18\ Bit)
-		\item Protokolleffektivität wird verschlechtert wenn IDE verwendet wird
 	\end{itemize}
 \end{frame}
 
 \begin{frame}{CAN-Frame}
+	Data Length Code (DLC):
 	\begin{figure}
 		\includegraphics[width=\linewidth]{frame.PNG}
 		\label{fig:frame}
@@ -192,10 +195,12 @@
 	\begin{itemize}
 		\item Data Length Code gibt die Länge des Data Field an
 		\item DLC sind 4\ Bit
+		\item Übersteigt das DLC 8 ist die Datenlänge totzdem 8 Byte, es können aber zusätzliche Informationen übermittelt werden
 	\end{itemize}
 \end{frame}
 
 \begin{frame}{CAN-Frame}
+	Data Field:
 	\begin{figure}
 		\includegraphics[width=\linewidth]{frame.PNG}
 		\label{fig:frame}
@@ -207,43 +212,47 @@
 \end{frame}
 
 \begin{frame}{CAN-Frame}
+	Cyclic Redundancy Check (CLC):
 	\begin{figure}
 		\includegraphics[width=\linewidth]{frame.PNG}
 		\label{fig:frame}
 	\end{figure}
 	\begin{itemize}
-		\item Cyclic Redundancy Check is eine 15\ Bit lange Prüfsequenz
+		\item Cyclic Redundancy Check ist eine 15\ Bit lange Prüfsequenz
 		\item Mit der, in der Prüfsequenz enthaltenen redundanten Information kann ein Empfänger prüfen, ob die Nachricht verfälscht wurde.
-		\item wird von rezissivem Delimiter-(DEL) Bit begrenzt
+		\item wird von rezessivem Delimiter-(DEL) Bit begrenzt
 	\end{itemize}
 \end{frame}
 
 \begin{frame}{CAN-Frame}
+	Acknowledge Field (ACK):
 	\begin{figure}
 		\includegraphics[width=\linewidth]{frame.PNG}
 		\label{fig:frame}
 	\end{figure}
 	\begin{itemize}
 		\item Acknowledge Field wird rezessiv gesendet, und bei korrektem Empfang von einem Empfäner dominant überschrieben
-		\item wenn ACK rezissiv ist, wird die Nachricht erneut übertragen
+		\item wenn ACK rezessiv ist, wird die Nachricht erneut übertragen
 		\item wird bei einem Empfänger ein Fehler erkannt, das ACK Bit ist aber gesetzt, so sendet er im Anschluss ein Error-Flag um die Nachricht erneut
 		anzufordern, und die systemweite Datenkonsistenz zu wahren
 	\end{itemize}
 \end{frame}
 
 \begin{frame}{CAN-Frame}
+	Delimiter (DEL):
 	\begin{figure}
 		\includegraphics[width=\linewidth]{frame.PNG}
 		\label{fig:frame}
 	\end{figure}
 	\begin{itemize}
-		\item Delimiter begrenzt ACK-Field rezissiv
+		\item Delimiter begrenzt ACK-Field rezessiv
 		\item wird bei lokalem Fehler eines Empfängers mit Error-Flag überschrieben, sodass die Nachricht erneut gesendet wird
 		\item dient der Unterscheidung zwischen Error-Flag und ACK-Field Ende
 	\end{itemize}
 \end{frame}
 
 \begin{frame}{CAN-Frame}
+	End of Frame (EOF):
 	\begin{figure}
 		\includegraphics[width=\linewidth]{frame.PNG}
 		\label{fig:frame}
@@ -257,7 +266,7 @@
 \begin{frame}{Bit Stuffing}
 	\begin{itemize}
 		\item nach 5 gleichen Bits muss ein inverses Bit eingefügt werden
-		\item dient der Nachsynchronisierung der Busteilnehmer, da sie aufgrund ungenauen Taktzeiten der ICs auseinanderdriften können
+		\item dient der Nachsynchronisierung der Busteilnehmer, da sie aufgrund ungenauen Taktzeiten der Oszillatoren auseinanderdriften können
 		\item dient auserdem der Unterscheidung von Errorflags
 		\item EOF ist vom Bitstuffing ausgenommen
 		\item die Stopf-Bits werden vom Transmitter herausgefiltert
@@ -279,7 +288,7 @@
 		\item jeder Empfänger versucht einen Fehler zu erkennen und diesen umgehend zu dementieren
 		\item Fehlermeldungen werden sofort nach erkennen des Fehlers gesendet
 		\item ausgenommen hiervon ist das CRC-Feld um die ACK Funktion aufrecht zu erhalten
-		\item Fehlermeldungen bestehen aus 6 gleichen Bits (rezissiv oder dominant)
+		\item Fehlermeldungen bestehen aus 6 gleichen Bits (rezessiv oder dominant)
 		\item das Error-Flag zerstört den Bus Traffic
 		\item wenn ein Fehler erkannt wird werden bei allen Empfängern die Nachrichten gelöscht, um eine systemweite Datenkonsistenz aufrecht zu erhalten
 	\end{itemize}
@@ -287,7 +296,7 @@
 
 \begin{frame}{Bus Zustände}
 	\begin{itemize}
-		\item jeder Knoten hat zwei Error Counter ( Transmit Error Counter und Error Counter)
+		\item jeder Knoten hat zwei Error Counter (Transmit Error Counter und Error Counter)
 		\item sendet ein Knoten ein Error Flag erhöht sich der Counter um 8, empfängt er ein Flag erhöht er sich um 1, bei korrektem Empfang wird er um 1 dekrementiert
 		\item ist der Counter kleiner 127 sendet er als Error Flag 6 dominiante Bits, die den Bus überschreiben und somit alle Nachrichten überschreiben
 		\item ist der Counter größer 127 werden 6 rezessive Bits gesendet, sodass der Bus nicht durchgehend gestört wird
@@ -312,7 +321,8 @@
 		\item Flugzeugtechnik
 		\item Raumfahrttechnik
 		\item Schienenfahrzeuge
-		\item Schiffbau 
+		\item Schiffbau
+		\item Landwirtschaft
 	\end{itemize}
 \end{frame}
 
